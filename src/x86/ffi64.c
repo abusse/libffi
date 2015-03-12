@@ -37,11 +37,13 @@
 #define MAX_GPR_REGS 6
 #define MAX_SSE_REGS 8
 
+typedef struct { int64_t m[8]; } __int512_t;
+
 struct register_args
 {
   /* Registers for argument passing.  */
   UINT64 gpr[MAX_GPR_REGS];
-  __int128_t sse[MAX_SSE_REGS];
+  __int512_t sse[MAX_SSE_REGS];
 };
 
 extern void ffi_call_unix64 (void *args, unsigned long bytes, unsigned flags,
@@ -471,10 +473,26 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 		  break;
 		case X86_64_SSE_CLASS:
 		case X86_64_SSEDF_CLASS:
-		  reg_args->sse[ssecount++] = *(UINT64 *) a;
+		  reg_args->sse[ssecount].m[0] = *(UINT64 *) a;
+		  reg_args->sse[ssecount].m[1] = 0;
+		  reg_args->sse[ssecount].m[2] = 0;	
+		  reg_args->sse[ssecount].m[3] = 0;	
+		  reg_args->sse[ssecount].m[4] = 0;	
+		  reg_args->sse[ssecount].m[5] = 0;	
+		  reg_args->sse[ssecount].m[6] = 0;	
+		  reg_args->sse[ssecount].m[7] = 0;	
+		  ssecount++;
 		  break;
 		case X86_64_SSESF_CLASS:
-		  reg_args->sse[ssecount++] = *(UINT32 *) a;
+		  reg_args->sse[ssecount].m[0] = *(UINT32 *) a;
+		  reg_args->sse[ssecount].m[1] = 0;
+		  reg_args->sse[ssecount].m[2] = 0;	
+		  reg_args->sse[ssecount].m[3] = 0;	
+		  reg_args->sse[ssecount].m[4] = 0;	
+		  reg_args->sse[ssecount].m[5] = 0;	
+		  reg_args->sse[ssecount].m[6] = 0;	
+		  reg_args->sse[ssecount].m[7] = 0;	
+		  ssecount++;
 		  break;
 		default:
 		  abort();
@@ -611,7 +629,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
       /* Otherwise, allocate space to make them consecutive.  */
       else
 	{
-	  char *a = alloca (16);
+	  char *a = alloca (64);
 	  int j;
 
 	  avalue[i] = a;
