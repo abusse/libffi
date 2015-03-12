@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -98,6 +98,13 @@
+@@ -176,6 +176,13 @@
  	(.eh_frame): Use FDE_ENCODING.
  	(.LASFDE1, .LASFDE2, LASFDE3): Simplify with FDE_ENCODE.
  
@@ -20,7 +20,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -321,6 +321,13 @@ if test x$TARGET = xX86 || test x$TARGET
+@@ -324,6 +324,13 @@ if test x$TARGET = xX86 || test x$TARGET
      fi
  fi
  
@@ -70,7 +70,7 @@ Index: libffi/src/x86/win64.S
  	# copy register arguments onto stack
  	test	$1,%r11
  	jne	.Lfirst_is_float	
-@@ -287,7 +295,7 @@ _ffi_closure_win64:     
+@@ -287,7 +295,7 @@ _ffi_closure_win64:
  	mov	%rax, %rcx	# context is first parameter
  	mov	%rsp, %rdx	# stack is second parameter
  	add	$48, %rdx	# point to start of arguments
@@ -79,7 +79,7 @@ Index: libffi/src/x86/win64.S
  	callq	*%rax		# call the real closure function
  	add	$40, %rsp
  	movq	%rax, %xmm0	# If the closure returned a float,
-@@ -296,8 +304,8 @@ _ffi_closure_win64:     
+@@ -296,8 +304,8 @@ _ffi_closure_win64:
  .ffi_closure_win64_end:
  
  	.balign 16
@@ -924,10 +924,11 @@ Index: libffi/configure
  HAVE_LONG_DOUBLE
  ALLOCA
  PA64_HPUX_FALSE
-@@ -13226,6 +13227,61 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_
+@@ -13239,6 +13240,61 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_
+ 
      fi
  fi
- 
++
 +if test x$TARGET = xX86_WIN64; then
 +    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ prefix in compiled symbols" >&5
 +$as_echo_n "checking for _ prefix in compiled symbols... " >&6; }
@@ -982,7 +983,6 @@ Index: libffi/configure
 +
 +    fi
 +fi
-+
+ 
  case "$target" in
       *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
- 
